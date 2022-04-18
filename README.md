@@ -5,9 +5,12 @@
 
 ## How to develop in SolidJS
 
+Rename exmapleData.json to data.json and insert your own crypto assets.<br>
+In listCoins.json there are all available coins that the app can get the price of.
+
 At the beggining in the project directory run:
 `npm install`
- 
+
 After that run:
 `npm dev` or `npm start`
 
