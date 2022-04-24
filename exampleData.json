@@ -1,6 +1,7 @@
 {
 	"assets":[
-		{ "name": "ADA", "id":"cardano", "qty": 1, "invested": 1 }
-
+		{ "name": "ADA", "id":"cardano", "qty": 1, "invested": 1 },
+		{ "name": "BTC", "id":"bitcoin", "qty": 1, "invested": 30000 },
+		{ "name": "MATIC", "id":"matic-network", "qty": 200, "invested": 100 }
 	]
 }
