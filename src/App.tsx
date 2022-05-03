@@ -21,7 +21,6 @@ const DisplayTable = (pricesData) =>{
 	}
 	
 	const getPrice = (id) => {
-		//console.log(pricesData[id])
 		if(pricesData[id] == undefined){
 			return 0
 		}
@@ -34,19 +33,10 @@ const DisplayTable = (pricesData) =>{
 		sumInvest:0,
 		totalProfit: 0,
 		totalPercent: 0,
-	})
-	/*,
-	handleQtyClick = (asset) => {
-		let val = asset.qty;
-		let input = document.createElement("input");
-		input.value = val;
-		
-	}*/
-	
+	});
 	setAssets(assetsJson);
 	
-	// dont know if this is the best way, but it works
-	function updateAll(){
+	function updateAll(){ // dont know if this is the best way, but it works
 		setAssets('items', {}, asst => ({ currentPrice: getPrice(asst.id) }));
 		setAssets('items', {}, asst => ({ worth: asst.currentPrice * asst.qty }));
 		setAssets('items', {}, asst => ({ profit: asst.worth - asst.invested }));
@@ -70,7 +60,6 @@ const DisplayTable = (pricesData) =>{
 	updateAll();
 	
 	
-	
 	const addAsset = (name) => {
 		setAssets('items', assets => [...assets, {name: "ADA", id:"cardano", qty: 1, invested: 1 }]);
 		
@@ -83,37 +72,19 @@ const DisplayTable = (pricesData) =>{
 		updateAll();
 	}
 	
-	const toggleInputInvestedAsset = (name) => {
-		setAssets('items', assets => assets.name !== name, "showInput", false );
-		setAssets('items', assets => assets.name === name, "showInput", true );
+	const toggleInputAsset = (name, type) => {
+		setAssets('items', assets => assets.name !== name, "showInput", undefined );
+		setAssets('items', assets => assets.name === name, "showInput", type );
 	};
 	
 	let input;
-	const editInvestedAsset = (input, name) => {
-		const value = input.value;
-		const parsed = parseFloat(value);
-		
-		console.log(input);
-		console.log(value);
-		console.log(parsed);
-		console.log(name);
-		
-		//if (!title.trim()) return;
-		setAssets('items', assets => assets.name === name, "invested", parsed );
+	const editAsset = (input, name, type) => {
+		const valueParsed = parseFloat(input.value);
+		setAssets('items', assets => assets.name === name, type, valueParsed );
 		input.value = "";
 		setAssets('items', assets => assets.name === name, "showInput", undefined );
 		updateAll();
 	};
-	
-	
-	
-	const editQtyAsset = (name) => {
-		
-		setAssets('items', assets => assets.name === name, "qty", 20 );
-		
-		updateAll();
-	}
-	
 	
 	const decimals = 8;
 	const MAX = 100;
@@ -135,13 +106,23 @@ const DisplayTable = (pricesData) =>{
 						<div class="asset list-group-item-action list-group-item-light">
 							<div class="name">{asset.name}</div>
 							
-							<div class="number qty" ondblclick={() => { editQtyAsset(asset.name) }}>{asset.qty.toFixed(decimals)}</div>
-							<div class="number invested" ondblclick={() => { toggleInputInvestedAsset(asset.name) }}>
-								<Show when={asset.showInput} fallback={asset.invested.toFixed(2)} >
-									<input type="number" ref={input} name="invested" size="1" placeholder="0.00" autofocus required
+							<div class="number qty" ondblclick={() => { toggleInputAsset(asset.name, "qty") }}>
+								<Show when={asset.showInput === "qty"} fallback={asset.qty.toFixed(decimals)} >
+									<input type="number" ref={input} name="invested" size="1" placeholder="0.00000000" autofocus
 										onKeyDown={(e) => {
 											if (e.key === "Enter") {
-												editInvestedAsset(input, asset.name);
+												editAsset(input, asset.name, "qty");
+											}
+										}}>
+									</input>
+								</Show>
+							</div>
+							<div class="number invested" ondblclick={() => { toggleInputAsset(asset.name, "invested") }}>
+								<Show when={asset.showInput === "invested"} fallback={asset.invested.toFixed(2)} >
+									<input type="number" ref={input} name="invested" size="1" placeholder="0.00" autofocus
+										onKeyDown={(e) => {
+											if (e.key === "Enter") {
+												editAsset(input, asset.name, "invested");
 											}
 										}}>
 									</input>
