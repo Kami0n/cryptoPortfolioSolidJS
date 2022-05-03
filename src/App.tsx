@@ -9,7 +9,6 @@ const coinPrice = async (param) => (await fetch(`https://api.coingecko.com/api/v
 
 const DisplayTable = (pricesData) =>{
 	
-	
 	const getColor = (n, max) => {
 		if(n > 100){
 			n = 100;
@@ -36,45 +35,20 @@ const DisplayTable = (pricesData) =>{
 		totalProfit: 0,
 		totalPercent: 0,
 	})
-	setAssets(assetsJson);
-	
 	/*,
 	handleQtyClick = (asset) => {
 		let val = asset.qty;
 		let input = document.createElement("input");
 		input.value = val;
 		
-	}*/;
+	}*/
 	
-	const addAsset = (name) => {
-		setAssets('items', assets => [...assets, {name: "ADA", id:"cardano", qty: 1, invested: 1 }]);
-		
-		updateAll();
-	}
-	
-	const removeAsset = (name) => {
-		setAssets('items', assets => assets.filter((asset) => asset.name !== name));
-		
-		updateAll();
-	}
-	
-	const editInvestedAsset = (name) => {
-		setAssets('items', assets => assets.name === name, "invested", 20 );
-		
-		updateAll();
-	};
-	
-	const editQtyAsset = (name) => {
-		console.log(name);
-		setAssets('items', assets => assets.filter((asset) => asset.name !== name));
-		
-		updateAll();
-	}
+	setAssets(assetsJson);
 	
 	// dont know if this is the best way, but it works
 	function updateAll(){
-		setAssets('items', {}, asst => ({ priceNow: getPrice(asst.id) }));
-		setAssets('items', {}, asst => ({ worth: asst.priceNow * asst.qty }));
+		setAssets('items', {}, asst => ({ currentPrice: getPrice(asst.id) }));
+		setAssets('items', {}, asst => ({ worth: asst.currentPrice * asst.qty }));
 		setAssets('items', {}, asst => ({ profit: asst.worth - asst.invested }));
 		setAssets('items', {}, asst => ({ percent: ( asst.invested > 0 ?  asst.profit/asst.invested * 100 : 0 ) }));
 		
@@ -94,6 +68,52 @@ const DisplayTable = (pricesData) =>{
 		setAssets('totalPercent', totalPercent);
 	}
 	updateAll();
+	
+	
+	
+	const addAsset = (name) => {
+		setAssets('items', assets => [...assets, {name: "ADA", id:"cardano", qty: 1, invested: 1 }]);
+		
+		updateAll();
+	}
+	
+	const removeAsset = (name) => {
+		setAssets('items', assets => assets.filter((asset) => asset.name !== name));
+		
+		updateAll();
+	}
+	
+	const toggleInputInvestedAsset = (name) => {
+		setAssets('items', assets => assets.name !== name, "showInput", false );
+		setAssets('items', assets => assets.name === name, "showInput", true );
+	};
+	
+	let input;
+	const editInvestedAsset = (input, name) => {
+		const value = input.value;
+		const parsed = parseFloat(value);
+		
+		console.log(input);
+		console.log(value);
+		console.log(parsed);
+		console.log(name);
+		
+		//if (!title.trim()) return;
+		setAssets('items', assets => assets.name === name, "invested", parsed );
+		input.value = "";
+		setAssets('items', assets => assets.name === name, "showInput", undefined );
+		updateAll();
+	};
+	
+	
+	
+	const editQtyAsset = (name) => {
+		
+		setAssets('items', assets => assets.name === name, "qty", 20 );
+		
+		updateAll();
+	}
+	
 	
 	const decimals = 8;
 	const MAX = 100;
@@ -115,10 +135,20 @@ const DisplayTable = (pricesData) =>{
 						<div class="asset list-group-item-action list-group-item-light">
 							<div class="name">{asset.name}</div>
 							
-							<div class="number qty" ondblclick={() => { editQtyAsset(asset.name); }}>{asset.qty.toFixed(decimals)}</div>
-							<div class="number invested" ondblclick={() => { editInvestedAsset(asset.name); }}>{asset.invested.toFixed(2)}</div>
+							<div class="number qty" ondblclick={() => { editQtyAsset(asset.name) }}>{asset.qty.toFixed(decimals)}</div>
+							<div class="number invested" ondblclick={() => { toggleInputInvestedAsset(asset.name) }}>
+								<Show when={asset.showInput} fallback={asset.invested.toFixed(2)} >
+									<input type="number" ref={input} name="invested" size="1" placeholder="0.00" autofocus required
+										onKeyDown={(e) => {
+											if (e.key === "Enter") {
+												editInvestedAsset(input, asset.name);
+											}
+										}}>
+									</input>
+								</Show>
+							</div>
 							
-							<div class="number priceNow">{ asset.priceNow.toFixed(decimals) }</div>
+							<div class="number currentPrice">{ asset.currentPrice.toFixed(decimals) }</div>
 							<div class="number worth">{asset.worth.toFixed(2)}</div>
 							<div class="number percent" style={getColor(asset.percent, MAX)}>{asset.percent.toFixed(0)} %</div>
 							<div class="number profit">{asset.profit.toFixed(2)}</div>

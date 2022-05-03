@@ -21,13 +21,21 @@
 	padding-bottom: 5rem;
 }
 
+input{
+	outline: none;
+	border: none;
+	border-radius: 0;
+	background-color: #d5d5d5;
+	
+}
+
 .assetsGrid{
 	width:100%;
 	max-width: 1200px;
 	margin: 0 auto;
 	.asset{
 		display: grid;
-		grid-template-columns: 0.5fr 1fr 0.5fr 1fr 0.5fr 0.5fr 0.5fr;
+		grid-template-columns: 0.5fr minmax(0, 1fr) minmax(0, 0.5fr) 1fr 0.5fr 0.5fr 0.5fr;
 		border-top: 1px solid black;
 		border-right: 1px solid black;
 		border-left: 1px solid black;
@@ -47,8 +55,13 @@
 		.number{
 			text-align: right;
 		}
-		.priceNow{
+		.currentPrice{
 			background-color: #ffef93;
+		}
+		
+		input[type=number]{
+			max-width: 100%;
+			text-align: right;
 		}
 	}
 }
