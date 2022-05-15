@@ -1,7 +1,7 @@
 import { createMemo, createSignal, For, onMount, Show } from "solid-js";
 import { createStore } from "solid-js/store";
 
-import assetsJson from '../data.json';
+import assetsJson from '../exampleData.json';
 
 console.clear();
 const coinsList = async () => (await fetch("https://api.coingecko.com/api/v3/coins/list")).json();
@@ -108,23 +108,29 @@ const DisplayTable = (pricesData) =>{
 							
 							<div class="number qty" ondblclick={() => { toggleInputAsset(asset.name, "qty") }}>
 								<Show when={asset.showInput === "qty"} fallback={asset.qty.toFixed(decimals)} >
-									<input type="number" ref={input} name="invested" size="1" placeholder="0.00000000" autofocus
+									<input type="number" ref={input} name="invested" size="1" placeholder="0.00000000" autofocus value={asset.qty.toFixed(decimals)}
 										onKeyDown={(e) => {
 											if (e.key === "Enter") {
 												editAsset(input, asset.name, "qty");
 											}
-										}}>
+										}}
+										onfocusout={(e) => {
+											editAsset( input, asset.name, "invested");
+										}} >
 									</input>
 								</Show>
 							</div>
 							<div class="number invested" ondblclick={() => { toggleInputAsset(asset.name, "invested") }}>
 								<Show when={asset.showInput === "invested"} fallback={asset.invested.toFixed(2)} >
-									<input type="number" ref={input} name="invested" size="1" placeholder="0.00" autofocus
+									<input type="number" ref={input} name="invested" size="1" placeholder="0.00" autofocus value={asset.invested.toFixed(2)}
 										onKeyDown={(e) => {
 											if (e.key === "Enter") {
 												editAsset(input, asset.name, "invested");
 											}
-										}}>
+										}}
+										onfocusout={(e) => {
+											editAsset( input, asset.name, "invested");
+										}} >
 									</input>
 								</Show>
 							</div>
